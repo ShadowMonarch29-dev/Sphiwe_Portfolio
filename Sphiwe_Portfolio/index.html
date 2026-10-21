@@ -1,0 +1,1716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Sphiwe Dube — 2nd-year Computer Science student at TUT Pretoria, aspiring cybersecurity analyst. Portfolio of projects, skills and achievements." />
+  <title>Sphiwe Dube | Cybersecurity Portfolio</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* =============================================
+       CSS CUSTOM PROPERTIES  (colour palette)
+       ============================================= */
+    :root {
+      --green:       #00563F;
+      --green-dark:  #003d2d;
+      --purple-dark: #1B0A33;
+      --purple-mid:  #2D1252;
+      --mint:        #7CF5C4;
+      --off-white:   #F4F1EA;
+      --muted:       #a89fc0;
+
+      --font-display: 'Anton', sans-serif;
+      --font-body:    'Space Grotesk', sans-serif;
+      --font-mono:    'JetBrains Mono', monospace;
+
+      --radius-sm: 8px;
+      --radius-md: 16px;
+      --radius-lg: 28px;
+      --px: clamp(1.4rem, 6vw, 6rem);
+
+      --t-fast: 0.18s ease;
+      --t-mid:  0.35s ease;
+    }
+
+    /* =============================================
+       RESET & BASE
+       ============================================= */
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      background: var(--purple-dark);
+      color: var(--off-white);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      overflow-x: hidden;
+      cursor: none;
+    }
+    @media (hover: none) { body { cursor: auto; } }
+    h1,h2,h3,h4 { line-height: 1.05; }
+    a { color: inherit; text-decoration: none; }
+    img { max-width:100%; display:block; }
+    ul  { list-style: none; }
+    button { cursor: none; }
+
+    :focus-visible {
+      outline: 3px solid var(--mint);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+
+    /* =============================================
+       CUSTOM CURSOR
+       ============================================= */
+    #cursor-dot, #cursor-ring {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+    }
+    #cursor-dot {
+      width: 8px; height: 8px;
+      background: var(--mint);
+      box-shadow: 0 0 10px var(--mint);
+      transition: transform 0.05s linear;
+    }
+    #cursor-ring {
+      width: 36px; height: 36px;
+      border: 2px solid var(--mint);
+      opacity: 0.5;
+      transition: width 0.22s ease, height 0.22s ease, opacity 0.22s ease;
+    }
+    body.cursor-hover #cursor-ring { width:56px; height:56px; opacity:0.85; }
+    @media (prefers-reduced-motion: reduce) {
+      #cursor-dot, #cursor-ring { display:none; }
+      body, button { cursor: auto; }
+    }
+
+    /* =============================================
+       SCROLL-REVEAL
+       ============================================= */
+    .reveal       { opacity:0; transform:translateY(36px);  transition:opacity .65s ease, transform .65s ease; }
+    .reveal-left  { opacity:0; transform:translateX(-40px); transition:opacity .65s ease, transform .65s ease; }
+    .reveal-right { opacity:0; transform:translateX(40px);  transition:opacity .65s ease, transform .65s ease; }
+    .reveal.visible, .reveal-left.visible, .reveal-right.visible { opacity:1; transform:none; }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal,.reveal-left,.reveal-right { opacity:1; transform:none; transition:none; }
+    }
+
+    /* =============================================
+       SCANLINE TEXTURE UTILITY
+       ============================================= */
+    .scanlines::after {
+      content:'';
+      position:absolute; inset:0;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px, transparent 3px,
+        rgba(0,0,0,0.07) 3px, rgba(0,0,0,0.07) 4px
+      );
+      pointer-events:none; z-index:2;
+    }
+
+    /* =============================================
+       GLITCH EFFECT
+       ============================================= */
+    @keyframes g1 {
+      0%,100%{ clip-path:inset(0 0 92% 0); transform:translate(-4px,0); }
+      50%    { clip-path:inset(55% 0 20% 0); transform:translate(4px,0); }
+    }
+    @keyframes g2 {
+      0%,100%{ clip-path:inset(72% 0 4% 0); transform:translate(4px,0); }
+      50%    { clip-path:inset(8% 0 68% 0); transform:translate(-4px,0); }
+    }
+    .glitch { position:relative; display:inline-block; }
+    .glitch::before, .glitch::after {
+      content:attr(data-text);
+      position:absolute; inset:0;
+      opacity:0;
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .glitch:hover::before { color:var(--mint);  opacity:.75; animation:g1 .22s steps(2) infinite; }
+      .glitch:hover::after  { color:#ff4fa3;       opacity:.5;  animation:g2 .22s steps(2) infinite; }
+    }
+
+    /* =============================================
+       BLINKING CURSOR
+       ============================================= */
+    @keyframes blink { 50%{opacity:0;} }
+    .blink {
+      display:inline-block; width:3px; height:1em;
+      background:var(--mint); vertical-align:text-bottom;
+      animation:blink 1s step-start infinite;
+      margin-left:2px;
+    }
+
+    /* =============================================
+       SECTIONS — shared
+       ============================================= */
+    section { padding:6rem var(--px); position:relative; }
+    .section-label {
+      font-family:var(--font-mono);
+      font-size:.78rem; letter-spacing:4px; text-transform:uppercase;
+      color:var(--mint); margin-bottom:.75rem; display:block;
+    }
+
+    /* =============================================
+       NAVBAR
+       ============================================= */
+    #navbar {
+      position:fixed; top:0; left:0; width:100%; z-index:500;
+      padding:1rem var(--px);
+      display:flex; align-items:center; justify-content:space-between;
+      background:rgba(27,10,51,0.88);
+      backdrop-filter:blur(14px);
+      border-bottom:1px solid rgba(124,245,196,0.1);
+      transition:background var(--t-mid), border-color var(--t-mid);
+    }
+    #navbar.bg-green {
+      background:rgba(0,86,63,0.92);
+      border-color:rgba(124,245,196,0.22);
+    }
+    .nav-logo {
+      font-family:var(--font-display);
+      font-size:1.5rem; letter-spacing:1px; color:var(--mint);
+    }
+    .nav-links { display:flex; gap:2rem; }
+    .nav-links a {
+      font-family:var(--font-mono); font-size:.8rem; letter-spacing:1px;
+      color:var(--off-white); opacity:.65;
+      transition:opacity var(--t-fast), color var(--t-fast);
+    }
+    .nav-links a:hover, .nav-links a.active { opacity:1; color:var(--mint); }
+
+    /* Hamburger */
+    .nav-toggle {
+      display:none; flex-direction:column; gap:5px;
+      background:none; border:none; padding:4px; z-index:501;
+    }
+    .nav-toggle span {
+      display:block; width:24px; height:2px; background:var(--off-white);
+      transition:transform var(--t-mid), opacity var(--t-fast);
+    }
+    .nav-toggle.open span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+    .nav-toggle.open span:nth-child(2){ opacity:0; }
+    .nav-toggle.open span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+
+    @media (max-width:700px) {
+      .nav-links {
+        position:fixed; top:0; right:-100%; height:100vh; width:68%; max-width:300px;
+        background:var(--purple-mid); flex-direction:column;
+        align-items:center; justify-content:center; gap:2.5rem;
+        transition:right var(--t-mid);
+        border-left:1px solid rgba(124,245,196,0.15); z-index:499;
+      }
+      .nav-links.open { right:0; }
+      .nav-toggle { display:flex; }
+      .nav-links a { font-size:1.1rem; }
+    }
+
+    /* =============================================
+       1. HERO
+       ============================================= */
+    #hero {
+      min-height:100vh;
+      background:
+        radial-gradient(ellipse 80% 60% at 70% 50%, rgba(0,86,63,0.5) 0%, transparent 70%),
+        var(--purple-dark);
+      display:flex; flex-direction:column; justify-content:center;
+      padding-top:8rem; overflow:hidden;
+    }
+    .hero-eyebrow {
+      font-family:var(--font-mono); font-size:.85rem; letter-spacing:3px;
+      color:var(--mint); text-transform:uppercase; margin-bottom:1rem;
+    }
+    .hero-name {
+      font-family:var(--font-display);
+      font-size:clamp(3.8rem,13vw,11.5rem);
+      text-transform:uppercase; letter-spacing:-2px; line-height:.92;
+      color:var(--off-white); margin-bottom:1.2rem;
+    }
+    .hero-name span {
+      -webkit-text-stroke:2px var(--off-white);
+      color:transparent;
+    }
+    .hero-subtitle {
+      font-family:var(--font-display);
+      font-size:clamp(1.1rem,3.2vw,2rem);
+      letter-spacing:2px; color:var(--mint); min-height:2.4rem;
+      margin-bottom:1.8rem;
+    }
+    .hero-terminal {
+      background:rgba(0,0,0,0.52);
+      border:1px solid rgba(124,245,196,0.22);
+      border-radius:var(--radius-md);
+      padding:1.2rem 1.5rem;
+      font-family:var(--font-mono); font-size:.86rem;
+      max-width:420px; margin-bottom:2.4rem;
+    }
+    .hero-terminal::before {
+      content:'● ● ●'; display:block;
+      font-size:.68rem; color:var(--muted); margin-bottom:.8rem; letter-spacing:4px;
+    }
+    .hero-terminal .line { display:block; line-height:1.85; }
+    .hero-terminal .prompt { color:var(--mint); }
+    .hero-terminal .out    { color:#a0f0d0; opacity:.9; }
+    .hero-btns { display:flex; gap:1rem; flex-wrap:wrap; }
+
+    /* =============================================
+       BUTTONS
+       ============================================= */
+    .btn {
+      display:inline-flex; align-items:center; gap:.5rem;
+      font-family:var(--font-display); font-size:1rem;
+      letter-spacing:2px; text-transform:uppercase;
+      padding:.9rem 2.2rem; border-radius:100px; border:none;
+      transition:transform var(--t-fast), box-shadow var(--t-fast), background var(--t-fast);
+    }
+    .btn:hover  { transform:translateY(-3px) scale(1.03); }
+    .btn:active { transform:scale(0.98); }
+    .btn-primary {
+      background:var(--mint); color:var(--purple-dark);
+      box-shadow:0 0 22px rgba(124,245,196,0.35);
+    }
+    .btn-primary:hover { box-shadow:0 0 38px rgba(124,245,196,0.6); }
+    .btn-outline {
+      background:transparent; color:var(--off-white);
+      border:2px solid var(--off-white);
+    }
+    .btn-outline:hover { border-color:var(--mint); color:var(--mint); }
+
+    /* =============================================
+       2. MARQUEE BAND
+       ============================================= */
+    #marquee {
+      background:var(--mint); overflow:hidden;
+      border-top:3px solid var(--green-dark);
+      border-bottom:3px solid var(--green-dark);
+      padding:0;
+    }
+    .marquee-track {
+      display:flex; width:max-content;
+      animation:scroll-left 22s linear infinite;
+    }
+    @media (prefers-reduced-motion:reduce) { .marquee-track { animation:none; } }
+    @keyframes scroll-left {
+      from { transform:translateX(0); }
+      to   { transform:translateX(-50%); }
+    }
+    .marquee-track span {
+      font-family:var(--font-display);
+      font-size:clamp(1rem,2.5vw,1.55rem);
+      letter-spacing:3px; text-transform:uppercase;
+      color:var(--purple-dark); white-space:nowrap;
+      padding:.9rem 2rem;
+    }
+    .marquee-track .dot { color:var(--green); padding:.9rem 0; }
+
+    /* =============================================
+       3. ABOUT  +  HOVER-MASK REVEAL
+       ============================================= */
+    #about { background:var(--green); }
+    .about-grid {
+      display:grid; grid-template-columns:1fr 1fr;
+      gap:4rem; align-items:center; margin-top:3rem;
+    }
+    .about-text h2 {
+      font-family:var(--font-display);
+      font-size:clamp(2.4rem,5.5vw,4.8rem);
+      text-transform:uppercase; color:var(--off-white);
+      margin-bottom:1.5rem; line-height:.95;
+    }
+    .about-text p { font-size:1.02rem; color:rgba(244,241,234,.85); margin-bottom:1rem; }
+    .about-text p strong { color:var(--mint); font-weight:700; }
+
+    /* --- Hover Mask Reveal container (sticker style) --- */
+    .photo-wrap {
+      display:flex; justify-content:center; position:relative;
+    }
+
+    /* Outer sticker frame */
+    .photo-sticker-frame {
+      position:relative;
+      width:300px; height:340px;
+      border-radius:var(--radius-lg);
+      border:4px solid var(--mint);
+      box-shadow:8px 8px 0 var(--purple-dark);
+      transform:rotate(2deg);
+      transition:transform var(--t-mid);
+      overflow:hidden;
+      background:var(--purple-mid);
+    }
+    .photo-sticker-frame:hover { transform:rotate(0deg) scale(1.03); }
+
+    /* Canvas fills the frame — WebGL renders here */
+    #hover-mask-canvas {
+      position:absolute; inset:0;
+      width:100%!important; height:100%!important;
+      display:block; z-index:1;
+      border-radius:calc(var(--radius-lg) - 4px);
+    }
+
+    /* Fallback / base layer visible before canvas initialises */
+    .photo-base {
+      position:absolute; inset:0;
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center; gap:.5rem;
+      font-family:var(--font-mono); font-size:.8rem; color:var(--mint);
+      z-index:0; text-align:center; padding:1rem;
+    }
+    .photo-base .icon { font-size:4rem; line-height:1; }
+
+    /* Badge stickers on frame */
+    .badge-sticker {
+      position:absolute;
+      font-family:var(--font-mono); font-size:.68rem; font-weight:700;
+      letter-spacing:1px; padding:.28rem .75rem;
+      border-radius:100px; border:2px solid var(--purple-dark);
+      z-index:10; pointer-events:none;
+    }
+    .bs-1 { top:-14px; right:-8px; transform:rotate(12deg);
+             background:var(--mint); color:var(--purple-dark); }
+    .bs-2 { bottom:-14px; left:8px; transform:rotate(-8deg);
+             background:var(--purple-dark); color:var(--mint); border-color:var(--mint); }
+
+    @media (max-width:800px) {
+      .about-grid { grid-template-columns:1fr; }
+      .photo-wrap { margin-bottom:2rem; order:-1; }
+    }
+
+    /* =============================================
+       4. FEATURED PROJECT
+       ============================================= */
+    #project { background:var(--purple-dark); overflow:hidden; }
+    .project-card {
+      background:var(--purple-mid);
+      border-radius:var(--radius-lg);
+      border:1px solid rgba(124,245,196,0.2);
+      overflow:hidden; margin-top:3rem;
+      display:grid; grid-template-columns:1fr 1fr; min-height:460px;
+      transition:box-shadow var(--t-mid), border-color var(--t-mid);
+    }
+    .project-card:hover {
+      box-shadow:0 0 65px rgba(124,245,196,0.13);
+      border-color:rgba(124,245,196,0.45);
+    }
+    .project-visual {
+      background:
+        radial-gradient(ellipse at 30% 60%, rgba(0,86,63,0.65), transparent 70%),
+        var(--green-dark);
+      display:flex; align-items:center; justify-content:center;
+      font-size:7rem; position:relative; overflow:hidden;
+    }
+    .project-visual::after { /* scanlines */
+      content:''; position:absolute; inset:0;
+      background:repeating-linear-gradient(
+        to bottom, transparent 0px, transparent 3px,
+        rgba(0,0,0,0.09) 3px, rgba(0,0,0,0.09) 4px
+      ); pointer-events:none;
+    }
+    .project-body {
+      padding:3rem 2.5rem;
+      display:flex; flex-direction:column; justify-content:center; gap:1.2rem;
+    }
+    .project-body h3 {
+      font-family:var(--font-display);
+      font-size:clamp(2.2rem,4.5vw,3.8rem);
+      text-transform:uppercase; color:var(--off-white); line-height:.95;
+    }
+    .project-body h3 em { font-style:normal; color:var(--mint); }
+    .project-body .project-desc { font-size:.96rem; color:var(--muted); line-height:1.7; }
+    .tag-row { display:flex; flex-wrap:wrap; gap:.5rem; }
+    .tag {
+      font-family:var(--font-mono); font-size:.7rem; letter-spacing:1px;
+      padding:.28rem .9rem; border-radius:100px;
+      border:1px solid rgba(124,245,196,.35);
+      color:var(--mint); background:rgba(124,245,196,.07);
+      text-transform:uppercase;
+    }
+    .project-features { display:flex; flex-direction:column; gap:.5rem; }
+    .project-features li {
+      font-family:var(--font-mono); font-size:.8rem;
+      color:rgba(244,241,234,.72); display:flex; gap:.6rem;
+    }
+    .project-features li::before { content:'▸'; color:var(--mint); flex-shrink:0; }
+    @media (max-width:800px) {
+      .project-card { grid-template-columns:1fr; }
+      .project-visual { min-height:200px; font-size:5rem; }
+    }
+
+    /* =============================================
+       5. SKILLS
+       ============================================= */
+    #skills { background:var(--green); }
+    .skills-heading {
+      font-family:var(--font-display);
+      font-size:clamp(2.4rem,5.5vw,4.8rem);
+      text-transform:uppercase; color:var(--off-white);
+      margin-bottom:3rem; line-height:.95;
+    }
+    .skills-groups {
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(230px, 1fr));
+      gap:2.5rem;
+    }
+    .skill-group h4 {
+      font-family:var(--font-mono); font-size:.76rem; letter-spacing:4px;
+      text-transform:uppercase; color:var(--mint); margin-bottom:1.2rem;
+      padding-bottom:.5rem; border-bottom:1px solid rgba(124,245,196,.25);
+    }
+    .skill-tiles { display:flex; flex-direction:column; gap:.75rem; }
+    /* Flip card */
+    .skill-tile { perspective:800px; height:62px; }
+    .tile-inner {
+      width:100%; height:100%; position:relative;
+      transform-style:preserve-3d;
+      transition:transform .42s ease;
+    }
+    .skill-tile:hover .tile-inner,
+    .skill-tile:focus-within .tile-inner { transform:rotateY(180deg); }
+    .tile-front, .tile-back {
+      position:absolute; inset:0; border-radius:var(--radius-sm);
+      display:flex; align-items:center; padding:0 1.2rem;
+      backface-visibility:hidden; -webkit-backface-visibility:hidden;
+    }
+    .tile-front {
+      background:rgba(0,0,0,.25); border:1px solid rgba(244,241,234,.15);
+      font-weight:600; font-size:.93rem; gap:.7rem;
+    }
+    .tile-front .ti { font-size:1.25rem; }
+    .tile-back {
+      background:var(--purple-mid); border:1px solid rgba(124,245,196,.3);
+      font-family:var(--font-mono); font-size:.76rem; color:var(--mint);
+      transform:rotateY(180deg); line-height:1.4;
+    }
+    @media (prefers-reduced-motion:reduce) {
+      .tile-inner { transition:none; }
+      .skill-tile:hover .tile-inner { transform:none; }
+    }
+
+    /* =============================================
+       6. ACHIEVEMENTS
+       ============================================= */
+    #achievements { background:var(--purple-dark); }
+    .achievements-heading {
+      font-family:var(--font-display);
+      font-size:clamp(2.4rem,5.5vw,4.8rem);
+      text-transform:uppercase; color:var(--off-white);
+      margin-bottom:3rem; line-height:.95;
+    }
+    .badge-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(255px, 1fr));
+      gap:1.5rem;
+    }
+    .badge-card {
+      background:var(--purple-mid); border:2px solid transparent;
+      border-radius:var(--radius-md); padding:1.8rem; position:relative; overflow:hidden;
+      transition:border-color var(--t-mid), transform var(--t-mid), box-shadow var(--t-mid);
+    }
+    .badge-card::before {
+      content:''; position:absolute; inset:0;
+      background:radial-gradient(circle at 80% 20%, rgba(124,245,196,.07), transparent 60%);
+    }
+    .badge-card:hover {
+      border-color:var(--mint); transform:translateY(-6px);
+      box-shadow:0 18px 44px rgba(0,0,0,.4);
+    }
+    .badge-icon { font-size:2.4rem; margin-bottom:.8rem; }
+    .badge-card h3 {
+      font-family:var(--font-display); font-size:1.28rem;
+      text-transform:uppercase; letter-spacing:1px;
+      color:var(--off-white); margin-bottom:.4rem;
+    }
+    .badge-card p { font-size:.86rem; color:var(--muted); line-height:1.5; }
+    .badge-status {
+      display:inline-block; font-family:var(--font-mono); font-size:.66rem;
+      letter-spacing:2px; text-transform:uppercase;
+      padding:.18rem .65rem; border-radius:100px; margin-top:.9rem;
+    }
+    .badge-status.awarded  { background:rgba(124,245,196,.12); color:var(--mint); border:1px solid rgba(124,245,196,.4); }
+    .badge-status.progress { background:rgba(255,200,50,.1);   color:#ffc832;     border:1px solid rgba(255,200,50,.4); }
+
+    /* =============================================
+       7. ROADMAP
+       ============================================= */
+    #roadmap { background:var(--purple-mid); }
+    .roadmap-heading {
+      font-family:var(--font-display);
+      font-size:clamp(2.4rem,5.5vw,4.8rem);
+      text-transform:uppercase; color:var(--off-white);
+      margin-bottom:4rem; line-height:.95;
+    }
+    .timeline { position:relative; max-width:760px; }
+    .timeline::before {
+      content:''; position:absolute; left:28px; top:0; bottom:0; width:2px;
+      background:linear-gradient(to bottom, var(--mint), var(--green), var(--purple-dark));
+    }
+    .tl-item { display:flex; gap:2rem; align-items:flex-start; margin-bottom:2.5rem; }
+    .tl-dot {
+      flex-shrink:0; width:58px; height:58px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.35rem; position:relative; z-index:1;
+      border:3px solid var(--mint); background:var(--purple-dark);
+    }
+    .tl-dot.active  { border-color:var(--mint); box-shadow:0 0 18px var(--mint); }
+    .tl-dot.planned { border-color:rgba(124,245,196,.3); opacity:.6; }
+    .tl-body { padding-top:.6rem; }
+    .tl-body h4 {
+      font-family:var(--font-display); font-size:1.3rem;
+      text-transform:uppercase; letter-spacing:1px; color:var(--off-white); margin-bottom:.3rem;
+    }
+    .tl-body p { font-size:.86rem; color:var(--muted); line-height:1.5; }
+    .tl-status {
+      display:inline-block; font-family:var(--font-mono); font-size:.64rem;
+      letter-spacing:2px; text-transform:uppercase;
+      padding:.14rem .6rem; border-radius:100px; margin-top:.5rem;
+    }
+    .tl-status.in-progress { background:rgba(124,245,196,.12); color:var(--mint); border:1px solid rgba(124,245,196,.4); }
+    .tl-status.planned     { background:rgba(255,255,255,.06); color:var(--muted); border:1px solid rgba(255,255,255,.15); }
+
+    /* =============================================
+       8. CONTACT
+       ============================================= */
+    #contact { background:var(--green); overflow:hidden; }
+    .contact-big {
+      font-family:var(--font-display);
+      font-size:clamp(2.8rem,8.5vw,7.5rem);
+      text-transform:uppercase; color:var(--off-white);
+      line-height:.9; margin-bottom:3rem;
+    }
+    .contact-big span { color:var(--mint); }
+    .contact-grid { display:grid; grid-template-columns:1fr 1.4fr; gap:4rem; align-items:start; }
+    .contact-links { display:flex; flex-direction:column; gap:1.1rem; }
+    .contact-link {
+      display:flex; align-items:center; gap:1rem;
+      font-family:var(--font-mono); font-size:.88rem;
+      color:rgba(244,241,234,.72);
+      transition:color var(--t-fast);
+    }
+    .contact-link:hover { color:var(--mint); }
+    .contact-link-icon {
+      width:44px; height:44px;
+      background:rgba(0,0,0,.25); border:1px solid rgba(244,241,234,.2);
+      border-radius:var(--radius-sm); display:grid; place-items:center;
+      font-size:1.1rem; flex-shrink:0;
+      transition:border-color var(--t-fast);
+    }
+    .contact-link:hover .contact-link-icon { border-color:var(--mint); }
+    /* Form */
+    .contact-form { display:flex; flex-direction:column; gap:1.1rem; }
+    .form-group { display:flex; flex-direction:column; gap:.4rem; }
+    .form-group label {
+      font-family:var(--font-mono); font-size:.76rem; letter-spacing:2px;
+      text-transform:uppercase; color:rgba(244,241,234,.55);
+    }
+    .form-group input, .form-group textarea {
+      background:rgba(0,0,0,.3); border:1.5px solid rgba(244,241,234,.2);
+      border-radius:var(--radius-sm); padding:.9rem 1.1rem;
+      color:var(--off-white); font-family:var(--font-body); font-size:.94rem;
+      resize:vertical;
+      transition:border-color var(--t-fast), box-shadow var(--t-fast);
+    }
+    .form-group input::placeholder, .form-group textarea::placeholder { color:rgba(244,241,234,.28); }
+    .form-group input:focus, .form-group textarea:focus {
+      outline:none; border-color:var(--mint);
+      box-shadow:0 0 0 3px rgba(124,245,196,.12);
+    }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    .form-status {
+      font-family:var(--font-mono); font-size:.83rem;
+      padding:.7rem 1rem; border-radius:var(--radius-sm); display:none;
+    }
+    .form-status.success { background:rgba(124,245,196,.1); border:1px solid rgba(124,245,196,.35); color:var(--mint); display:block; }
+    .form-status.error   { background:rgba(255,80,80,.1);   border:1px solid rgba(255,80,80,.35);   color:#ff8080; display:block; }
+    @media (max-width:800px) {
+      .contact-grid { grid-template-columns:1fr; gap:2.5rem; }
+      .form-row { grid-template-columns:1fr; }
+    }
+
+    /* =============================================
+       FOOTER
+       ============================================= */
+    footer {
+      background:var(--purple-dark);
+      padding:3rem var(--px);
+      border-top:1px solid rgba(124,245,196,.1);
+    }
+    .footer-inner {
+      display:flex; align-items:center; justify-content:space-between;
+      flex-wrap:wrap; gap:1.5rem;
+    }
+    .footer-logo { font-family:var(--font-display); font-size:2rem; color:var(--mint); }
+    .footer-copy { font-family:var(--font-mono); font-size:.76rem; color:var(--muted); }
+    /* Easter egg terminal */
+    .footer-terminal {
+      width:100%; margin-top:2rem;
+      background:rgba(0,0,0,.4); border:1px solid rgba(124,245,196,.15);
+      border-radius:var(--radius-sm); padding:.8rem 1.2rem;
+      font-family:var(--font-mono); font-size:.8rem;
+    }
+    .footer-terminal .ft-prompt { color:var(--mint); user-select:none; }
+    #footer-input {
+      background:none; border:none; color:var(--off-white);
+      font-family:var(--font-mono); font-size:.8rem;
+      outline:none; width:220px; caret-color:var(--mint);
+    }
+    #footer-output { margin-top:.5rem; color:var(--mint); min-height:1.2rem; white-space:pre; }
+
+    /* Nav overlay (mobile) */
+    #nav-overlay {
+      display:none; position:fixed; inset:0;
+      background:rgba(0,0,0,.55); z-index:498;
+    }
+    #nav-overlay.show { display:block; }
+
+    /* Visually hidden (a11y) */
+    .sr-only {
+      position:absolute; width:1px; height:1px;
+      padding:0; margin:-1px; overflow:hidden;
+      clip:rect(0,0,0,0); white-space:nowrap; border:0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Custom cursor -->
+  <div id="cursor-dot"  aria-hidden="true"></div>
+  <div id="cursor-ring" aria-hidden="true"></div>
+
+  <!-- Mobile nav overlay -->
+  <div id="nav-overlay" aria-hidden="true"></div>
+
+  <!-- =============================================
+       NAVBAR
+       ============================================= -->
+  <nav id="navbar" role="navigation" aria-label="Main navigation">
+    <a href="#hero" class="nav-logo" aria-label="Sphiwe Dube — home">SD</a>
+
+    <ul class="nav-links" id="nav-menu" role="list">
+      <li><a href="#hero"         class="active">Home</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#project">Project</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#achievements">Certs</a></li>
+      <li><a href="#roadmap">Roadmap</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+
+    <button class="nav-toggle" id="nav-toggle"
+            aria-controls="nav-menu" aria-expanded="false"
+            aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+
+  <!-- =============================================
+       1. HERO
+       ============================================= -->
+  <section id="hero" aria-labelledby="hero-name">
+    <p class="hero-eyebrow">// init portfolio.exe</p>
+
+    <h1 id="hero-name" class="hero-name glitch" data-text="SPHIWE DUBE">
+      SPHIWE<br><span>DUBE</span>
+    </h1>
+
+    <p class="hero-subtitle" aria-live="polite" aria-label="Cycling subtitle">
+      <span id="typing-text"></span><span class="blink" aria-hidden="true"></span>
+    </p>
+
+    <div class="hero-terminal" role="complementary" aria-label="Terminal snippet">
+      <span class="line"><span class="prompt">$ </span><span>whoami</span></span>
+      <span class="line out">sphiwe_dube</span>
+      <span class="line"><span class="prompt">$ </span><span>cat mission.txt</span></span>
+      <span class="line out">Securing the digital world, one line at a time.</span>
+      <span class="line"><span class="prompt">$ </span><span class="blink" aria-hidden="true"></span></span>
+    </div>
+
+    <div class="hero-btns">
+      <a href="#project" class="btn btn-primary">View My Work</a>
+      <a href="#contact" class="btn btn-outline">Contact Me</a>
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       2. MARQUEE BAND
+       ============================================= -->
+  <div id="marquee" role="marquee" aria-label="Skills scrolling ticker">
+    <div class="marquee-track" aria-hidden="true">
+      <span>CYBERSECURITY</span><span class="dot">•</span>
+      <span>NETWORKING</span><span class="dot">•</span>
+      <span>JAVA</span><span class="dot">•</span>
+      <span>DIGITAL ELECTRONICS</span><span class="dot">•</span>
+      <span>SECURE BY DESIGN</span><span class="dot">•</span>
+      <span>ETHICAL HACKING</span><span class="dot">•</span>
+      <span>CISCO CCNA</span><span class="dot">•</span>
+      <span>DISCRETE STRUCTURES</span><span class="dot">•</span>
+      <!-- duplicate for seamless loop -->
+      <span>CYBERSECURITY</span><span class="dot">•</span>
+      <span>NETWORKING</span><span class="dot">•</span>
+      <span>JAVA</span><span class="dot">•</span>
+      <span>DIGITAL ELECTRONICS</span><span class="dot">•</span>
+      <span>SECURE BY DESIGN</span><span class="dot">•</span>
+      <span>ETHICAL HACKING</span><span class="dot">•</span>
+      <span>CISCO CCNA</span><span class="dot">•</span>
+      <span>DISCRETE STRUCTURES</span><span class="dot">•</span>
+    </div>
+  </div>
+
+
+  <!-- =============================================
+       3. ABOUT  — with Hover Mask Reveal
+       ============================================= -->
+  <section id="about" aria-labelledby="about-heading">
+    <span class="section-label reveal">// about.me</span>
+
+    <div class="about-grid">
+
+      <!-- === HOVER MASK REVEAL === -->
+      <div class="photo-wrap reveal-left">
+        <div class="photo-sticker-frame" id="mask-frame" role="img"
+             aria-label="Interactive photo — hover to reveal">
+
+          <!-- WebGL canvas (filled by JS) -->
+          <canvas id="hover-mask-canvas" aria-hidden="true"></canvas>
+
+          <!-- Fallback shown before JS / on mobile -->
+          <div class="photo-base" id="photo-fallback">
+            <span class="icon" aria-hidden="true">🛡️</span>
+            <span>[ Photo Coming Soon ]</span>
+            <span style="opacity:.55; font-size:.7rem; margin-top:.3rem;">hover to reveal</span>
+          </div>
+
+          <!-- Sticker badges -->
+          <span class="badge-sticker bs-1" aria-hidden="true">TUT 🎓</span>
+          <span class="badge-sticker bs-2" aria-hidden="true">🔐 Cyber</span>
+        </div>
+      </div>
+
+      <!-- Bio text -->
+      <div class="about-text reveal-right">
+        <h2 id="about-heading" class="glitch" data-text="WHO AM I?">WHO AM I?</h2>
+        <p>
+          Hey — I'm <strong>Sphiwe Dube</strong>, a second-year Diploma in
+          Computer Science student at
+          <strong>Tshwane University of Technology (TUT)</strong> in Pretoria,
+          South Africa.
+        </p>
+        <p>
+          I'm obsessed with <strong>cybersecurity</strong> — understanding how
+          systems break, and more importantly how to build them so they don't.
+          Whether it's analysing network traffic, writing secure Java, or
+          designing tamper-evident systems, I'm always looking for the
+          security angle.
+        </p>
+        <p>
+          Outside the classroom I chase certifications, build projects, enter
+          hackathons, and explore the world of ethical hacking. My mission is
+          to become a <strong>cybersecurity analyst</strong> who protects
+          South African businesses and communities.
+        </p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       4. FEATURED PROJECT — BEACON / PAUSECHECK
+       ============================================= -->
+  <section id="project" aria-labelledby="project-heading">
+    <span class="section-label reveal">// featured_project</span>
+    <h2 id="project-heading" class="sr-only">Featured Project</h2>
+
+    <article class="project-card reveal" aria-labelledby="project-title">
+      <div class="project-visual scanlines" aria-hidden="true">🛡️</div>
+      <div class="project-body">
+        <h3 id="project-title">BEACON<br><em>/ PauseCheck</em></h3>
+
+        <div class="tag-row" aria-label="Project tags">
+          <span class="tag">Cybersecurity</span>
+          <span class="tag">Fraud Prevention</span>
+          <span class="tag">Security by Design</span>
+          <span class="tag">Hackathon</span>
+          <span class="tag">SMME Cyber Protection</span>
+        </div>
+
+        <p class="project-desc">
+          A <em>"first hour" response kit</em> for small businesses hit by
+          outgoing supplier-payment scams, built for the
+          <strong>SMME Cyber Protection</strong> hackathon track.
+        </p>
+
+        <ul class="project-features" aria-label="Key features">
+          <li>Pause Before Pay — prevention gate that flags suspicious payments before they go out</li>
+          <li>Guided response playbook to walk owners through the critical first 60 minutes</li>
+          <li>Tamper-evident evidence recording via hash chain for SAPS and bank reporting</li>
+        </ul>
+
+        <a href="#contact" class="btn btn-primary"
+           style="align-self:flex-start; margin-top:.5rem;"
+           aria-label="Contact Sphiwe about BEACON">Learn More →</a>
+      </div>
+    </article>
+  </section>
+
+
+  <!-- =============================================
+       5. SKILLS
+       ============================================= -->
+  <section id="skills" aria-labelledby="skills-heading">
+    <span class="section-label reveal">// skills.list</span>
+    <h2 id="skills-heading" class="skills-heading glitch reveal" data-text="WHAT I KNOW">WHAT I KNOW</h2>
+
+    <div class="skills-groups">
+
+      <!-- Languages & Dev -->
+      <div class="skill-group reveal">
+        <h4>Languages &amp; Dev</h4>
+        <div class="skill-tiles">
+          <div class="skill-tile" tabindex="0" aria-label="Java — hover for detail">
+            <div class="tile-inner">
+              <div class="tile-front"><span class="ti" aria-hidden="true">☕</span>Java</div>
+              <div class="tile-back">OOP, data structures, desktop &amp; console apps</div>
+            </div>
+          </div>
+          <div class="skill-tile" tabindex="0" aria-label="HTML / CSS — hover for detail">
+            <div class="tile-inner">
+              <div class="tile-front"><span class="ti" aria-hidden="true">🌐</span>HTML / CSS</div>
+              <div class="tile-back">Semantic markup, responsive design, accessibility</div>
+            </div>
+          </div>
+          <div class="skill-tile" tabindex="0" aria-label="JavaScript — hover for detail">
+            <div class="tile-inner">
+              <div class="tile-front"><span class="ti" aria-hidden="true">⚡</span>JavaScript</div>
+              <div class="tile-back">Vanilla JS, DOM manipulation, async patterns</div>
+            </div>
+          </div>
+          <div class="skill-tile" tabindex="0" aria-label="Python — hover for detail">
+            <div class="tile-inner">
+              <div class="tile-front"><span class="ti" aria-hidden="true">🐍</span>Python</div>
+              <div class="tile-back">Scripting, automation, security tooling</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Networking -->
+      <div class="skill-group reveal" style="transition-delay:.1s">
+        <h4>Networking</h4>
+        <div class="skill-tiles">
+          <div class="skill-tile" tabindex="0" aria-label="Cisco CCNA/ITN — hover for detail">
+            <div class="tile-inner">
+              <div class="tile-front"><span class="ti" aria-hidden="true">🔌</span>Cisco CCNA/ITN</div>
+              <div class="tile-back">Routing, switching, VLANs, IP addressing</div>
+            </div>
+          </div>
+          <div class="skill-tile" tabindex="0" aria-label="TCP/IP — hover for detail">
+            <div class="tile-inner">
+              <div class="tile-front"><span class="ti" aria-hidden="true">📡</span>TCP/IP Protocols</div>
+              <div class="tile-back">OSI model, packet analysis, DNS, DHCP, HTTP/S</div>
+            </div>
+          </div>
+          <div class="skill-tile" tabindex="0" aria-label="Network Security — hover for detail">
+            <div class="tile-inner">
+              <div class="tile-front"><span class="ti" aria-hidden="true">🔒</span>Network Security</div>
+              <div class="tile-back">Firewalls, ACLs, VPN concepts, threat modelling</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Security -->
+      <div class="skill-group reveal" style="transition-delay:.2s">
+        <h4>Security</h4>
+        <div class="skill-tiles">
+          <div class="skill-tile" tabindex="0" aria-label="Cybersecurity Fundamentals — hover for detail">
+            <div class="tile-inner">
+              <div class="tile-front"><span class="ti" aria-hidden="true">🛡️</span>Cyber Fundamentals</div>
+              <div class="tile-back">CIA triad, risk assessment, secure design principles</div>
+            </div>
+          </div>
+          <div class="skill-tile" tabindex="0" aria-label="Digital Electronics — hover for detail">
+            <div class="tile-inner">
+              <div class="tile-front"><span class="ti" aria-hidden="true">⚙️</span>Digital Electronics</div>
+              <div class="tile-back">Logic gates, Boolean algebra, circuit design</div>
+            </div>
+          </div>
+          <div class="skill-tile" tabindex="0" aria-label="Discrete Structures — hover for detail">
+            <div class="tile-inner">
+              <div class="tile-front"><span class="ti" aria-hidden="true">🧮</span>Discrete Structures</div>
+              <div class="tile-back">Graph theory, cryptographic foundations, formal logic</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       6. ACHIEVEMENTS & CERTIFICATIONS
+       ============================================= -->
+  <section id="achievements" aria-labelledby="achievements-heading">
+    <span class="section-label reveal">// achievements.json</span>
+    <h2 id="achievements-heading" class="achievements-heading glitch reveal" data-text="UNLOCKED">UNLOCKED</h2>
+
+    <div class="badge-grid">
+      <article class="badge-card reveal" aria-labelledby="b1">
+        <div class="badge-icon" aria-hidden="true">🏆</div>
+        <h3 id="b1">TUT AI Week — Top 5</h3>
+        <p>Placed in the top 5 at TUT AI Week competition during first year, competing across multiple faculties.</p>
+        <span class="badge-status awarded">Awarded · 2024</span>
+      </article>
+      <article class="badge-card reveal" style="transition-delay:.1s" aria-labelledby="b2">
+        <div class="badge-icon" aria-hidden="true">🌱</div>
+        <h3 id="b2">Green Digital Infrastructure</h3>
+        <p>Certificate of Attendance — Green Digital Infrastructure Training by GIZ / Global Gateway / African Union.</p>
+        <span class="badge-status awarded">Awarded · 2024</span>
+      </article>
+      <article class="badge-card reveal" style="transition-delay:.2s" aria-labelledby="b3">
+        <div class="badge-icon" aria-hidden="true">📡</div>
+        <h3 id="b3">Cisco Networking Academy</h3>
+        <p>Enrolled in Cisco NetAcad — working through Introduction to Networks (ITN) on the path to CCNA.</p>
+        <span class="badge-status progress">In Progress · 2025</span>
+      </article>
+      <article class="badge-card reveal" style="transition-delay:.3s" aria-labelledby="b4">
+        <div class="badge-icon" aria-hidden="true">🔐</div>
+        <h3 id="b4">Hackathon — SMME Track</h3>
+        <p>Built BEACON / PauseCheck for the SMME Cyber Protection hackathon track, tackling real-world payment fraud.</p>
+        <span class="badge-status awarded">Awarded · 2025</span>
+      </article>
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       7. LEARNING ROADMAP
+       ============================================= -->
+  <section id="roadmap" aria-labelledby="roadmap-heading">
+    <span class="section-label reveal">// roadmap.timeline</span>
+    <h2 id="roadmap-heading" class="roadmap-heading glitch reveal" data-text="THE JOURNEY">THE JOURNEY</h2>
+
+    <div class="timeline" role="list">
+      <div class="tl-item reveal" role="listitem">
+        <div class="tl-dot active" aria-label="In progress">📡</div>
+        <div class="tl-body">
+          <h4>Cisco CCNA / ITN</h4>
+          <p>Introduction to Networks via Cisco Networking Academy. Routing, switching, IP addressing and network fundamentals.</p>
+          <span class="tl-status in-progress">In Progress</span>
+        </div>
+      </div>
+      <div class="tl-item reveal" style="transition-delay:.1s" role="listitem">
+        <div class="tl-dot active" aria-label="In progress">🎓</div>
+        <div class="tl-body">
+          <h4>ISC² CC &amp; Google Cybersecurity Cert</h4>
+          <p>ISC² Certified in Cybersecurity (free exam) + Google Cybersecurity Certificate on Coursera for a solid professional baseline.</p>
+          <span class="tl-status in-progress">In Progress</span>
+        </div>
+      </div>
+      <div class="tl-item reveal" style="transition-delay:.2s" role="listitem">
+        <div class="tl-dot planned" aria-label="Planned">🏯</div>
+        <div class="tl-body">
+          <h4>Fortinet NSE 1 – 3</h4>
+          <p>Free Fortinet Network Security Expert certifications covering threat landscape, network security and firewall fundamentals.</p>
+          <span class="tl-status planned">Planned</span>
+        </div>
+      </div>
+      <div class="tl-item reveal" style="transition-delay:.3s" role="listitem">
+        <div class="tl-dot planned" aria-label="Planned">🧪</div>
+        <div class="tl-body">
+          <h4>TryHackMe — Paths</h4>
+          <p>Pre-Security, SOC Level 1, and Jr Penetration Tester learning paths for hands-on CTF and lab practice.</p>
+          <span class="tl-status planned">Planned</span>
+        </div>
+      </div>
+      <div class="tl-item reveal" style="transition-delay:.4s" role="listitem">
+        <div class="tl-dot planned" aria-label="Planned">🔒</div>
+        <div class="tl-body">
+          <h4>CompTIA Security+</h4>
+          <p>Industry-standard certification covering threat actors, cryptography, identity management and security operations.</p>
+          <span class="tl-status planned">Planned</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       8. CONTACT
+       ============================================= -->
+  <section id="contact" aria-labelledby="contact-heading">
+    <span class="section-label reveal">// contact.sh</span>
+
+    <h2 id="contact-heading" class="contact-big reveal">
+      LET'S TALK<br><span>SECURITY.</span>
+    </h2>
+
+    <div class="contact-grid">
+      <div class="contact-links reveal-left">
+        <a href="mailto:sphiwe@example.com" class="contact-link">
+          <span class="contact-link-icon" aria-hidden="true">✉️</span>
+          sphiwe@example.com
+        </a>
+        <a href="https://linkedin.com/in/sphiwe-dube" target="_blank" rel="noopener noreferrer" class="contact-link">
+          <span class="contact-link-icon" aria-hidden="true">💼</span>
+          linkedin.com/in/sphiwe-dube
+        </a>
+        <a href="https://github.com/sphiwe-dube" target="_blank" rel="noopener noreferrer" class="contact-link">
+          <span class="contact-link-icon" aria-hidden="true">🐙</span>
+          github.com/sphiwe-dube
+        </a>
+        <p style="font-family:var(--font-mono);font-size:.78rem;color:rgba(244,241,234,.48);margin-top:1rem;">
+          Based in Pretoria, South Africa 🇿🇦<br>
+          Open to internships &amp; entry-level roles
+        </p>
+      </div>
+
+      <form class="contact-form reveal-right" id="contact-form"
+            novalidate aria-label="Send Sphiwe a message">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="c-name">Name *</label>
+            <input type="text" id="c-name" name="name" placeholder="Jane Doe" autocomplete="name" required />
+          </div>
+          <div class="form-group">
+            <label for="c-email">Email *</label>
+            <input type="email" id="c-email" name="email" placeholder="jane@example.com" autocomplete="email" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="c-subject">Subject *</label>
+          <input type="text" id="c-subject" name="subject" placeholder="Internship opportunity" required />
+        </div>
+        <div class="form-group">
+          <label for="c-message">Message *</label>
+          <textarea id="c-message" name="message" rows="5" placeholder="Tell me about the opportunity…" required></textarea>
+        </div>
+        <div id="form-status" class="form-status" role="alert" aria-live="polite"></div>
+        <button type="submit" class="btn btn-primary">Send Message 🔐</button>
+      </form>
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       FOOTER
+       ============================================= -->
+  <footer>
+    <div class="footer-inner">
+      <span class="footer-logo">SD</span>
+      <p class="footer-copy">
+        Sphiwe Dube &copy; <span id="footer-year"></span> &mdash;
+        Diploma CS &bull; TUT Pretoria &bull; Aspiring Cybersecurity Analyst
+      </p>
+    </div>
+    <div class="footer-terminal" aria-label="Easter egg terminal — type: sudo hire sphiwe">
+      <span class="ft-prompt">root@terminal:~$ </span>
+      <input type="text" id="footer-input"
+             aria-label="Terminal input — try: sudo hire sphiwe"
+             placeholder="try: sudo hire sphiwe"
+             autocomplete="off" spellcheck="false" />
+      <div id="footer-output" aria-live="polite"></div>
+    </div>
+  </footer>
+
+
+  <!-- =============================================
+       THREE.JS  (same CDN the Framer module uses)
+       ============================================= -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.174.0/build/three.module.js"
+    }
+  }
+  </script>
+
+  <script type="module">
+    /* ============================================================
+       HOVER MASK REVEAL — vanilla re-implementation of the
+       Framer HoverMaskReveal component's fluid simulation.
+
+       Algorithm (Navier-Stokes on the GPU):
+         1. Mouse move  → splat velocity + density into FBOs
+         2. Advect      → semi-Lagrangian advection (velocity + density)
+         3. Divergence  → compute div(v)
+         4. Pressure    → iterative Jacobi solve
+         5. Gradient sub→ project velocity to divergence-free
+         6. Render      → use density FBO as mask alpha over reveal colour
+
+       Designed to replicate the "liquid ink blob" aesthetic.
+       Gracefully degrades: hides canvas on mobile / WebGL failure.
+       ============================================================ */
+
+    import {
+      Scene, PerspectiveCamera, OrthographicCamera,
+      WebGLRenderer, PlaneGeometry, Mesh, ShaderMaterial,
+      Vector2, LinearFilter, HalfFloatType, RGBAFormat,
+      WebGLRenderTarget, Clock
+    } from 'three';
+
+    /* ---- config (mirrors Framer component defaults) ----------- */
+    const CFG = {
+      RADIUS:               0.18,   // splat radius in UV space
+      VELOCITY_DISSIPATION: 0.98,
+      DENSITY_DISSIPATION:  0.97,
+      PRESSURE_ITERATIONS:  20,
+      SIM_SCALE:            0.5,    // fluid FBO is half resolution
+      DENSITY_AMOUNT:       6.0,    // how fast the mask fills
+      SHRINK_SPEED:         0.994,  // density decay per frame when mouse leaves
+    };
+
+    /* ---- guard: skip on mobile / coarse pointer / reduced-motion */
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isCoarse       = window.matchMedia('(pointer: coarse)').matches;
+    const isMobile       = window.matchMedia('(max-width: 768px)').matches;
+
+    if (!prefersReduced && !isCoarse && !isMobile) {
+      initHoverMask();
+    }
+
+    function initHoverMask() {
+      const frame    = document.getElementById('mask-frame');
+      const canvas   = document.getElementById('hover-mask-canvas');
+      const fallback = document.getElementById('photo-fallback');
+      if (!frame || !canvas) return;
+
+      /* ---- renderer ------------------------------------------ */
+      let renderer;
+      try {
+        renderer = new WebGLRenderer({ canvas, alpha: true, antialias: true });
+      } catch (e) { return; } // WebGL unavailable
+
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+      /* ---- sizes --------------------------------------------- */
+      let W = frame.clientWidth;
+      let H = frame.clientHeight;
+      renderer.setSize(W, H);
+
+      /* ---- scenes / cameras ---------------------------------- */
+      const scene      = new Scene();
+      const aspect     = W / H;
+      const perspective = 800;
+
+      const fovDeg = (180 * (2 * Math.atan(H / 2 / perspective))) / Math.PI;
+      const camera = new PerspectiveCamera(fovDeg, aspect, 1, 5000);
+      camera.position.set(0, 0, perspective);
+
+      // Orthographic camera for fullscreen quad passes
+      const ortho = new OrthographicCamera(-1, 1, 1, -1, 0, 1);
+      const quadGeo = new PlaneGeometry(2, 2);
+
+      /* ---- FBO factory --------------------------------------- */
+      const fboOpts = {
+        type:           HalfFloatType,
+        minFilter:      LinearFilter,
+        magFilter:      LinearFilter,
+        format:         RGBAFormat,
+        generateMipmaps:false,
+        depthBuffer:    false,
+        stencilBuffer:  false,
+      };
+
+      function makeFBO(w, h) { return new WebGLRenderTarget(w, h, fboOpts); }
+
+      let sW = Math.max(1, Math.floor(W * CFG.SIM_SCALE));
+      let sH = Math.max(1, Math.floor(H * CFG.SIM_SCALE));
+
+      let velA = makeFBO(sW, sH), velB = makeFBO(sW, sH);
+      let divFBO   = makeFBO(sW, sH);
+      let presA = makeFBO(sW, sH), presB = makeFBO(sW, sH);
+      let denA  = makeFBO(sW, sH), denB  = makeFBO(sW, sH);
+
+      /* ---- shared vertex shaders ----------------------------- */
+      const VS_MAIN = `
+        varying vec2 vUv;
+        void main(){
+          vUv = uv;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+        }`;
+
+      const VS_QUAD = `
+        varying vec2 vUv;
+        void main(){
+          vUv = uv;
+          gl_Position = vec4(position.xy, 0.0, 1.0);
+        }`;
+
+      /* ---- fragment shaders (fluid simulation) --------------- */
+
+      // Splat velocity
+      const FS_SPLAT_VEL = `
+        precision highp float;
+        varying vec2 vUv;
+        uniform vec2  u_point;
+        uniform vec2  u_vel;
+        uniform float u_radius;
+        uniform float u_aspect;
+        uniform sampler2D u_target;
+        void main(){
+          vec2 p = vUv - u_point;
+          p.x *= max(u_aspect, 1.0);
+          p.y *= max(1.0/u_aspect, 1.0);
+          float splat = exp(-dot(p,p)/(u_radius*u_radius));
+          vec4 base = texture2D(u_target, vUv);
+          base.xy += splat * u_vel;
+          gl_FragColor = base;
+        }`;
+
+      // Splat density
+      const FS_SPLAT_DEN = `
+        precision highp float;
+        varying vec2 vUv;
+        uniform vec2  u_point;
+        uniform float u_radius;
+        uniform float u_aspect;
+        uniform float u_amount;
+        uniform sampler2D u_target;
+        void main(){
+          vec2 p = vUv - u_point;
+          p.x *= max(u_aspect, 1.0);
+          p.y *= max(1.0/u_aspect, 1.0);
+          float splat = exp(-dot(p,p)/(u_radius*u_radius));
+          float base  = texture2D(u_target, vUv).r;
+          gl_FragColor = vec4(base + splat*u_amount, 0.0, 0.0, 1.0);
+        }`;
+
+      // Advect (semi-Lagrangian)
+      const FS_ADVECT = `
+        precision highp float;
+        varying vec2 vUv;
+        uniform sampler2D u_vel;
+        uniform sampler2D u_src;
+        uniform vec2  u_texel;
+        uniform float u_dt;
+        uniform float u_diss;
+        void main(){
+          vec2 v   = texture2D(u_vel, vUv).xy;
+          vec2 pos = vUv - v * u_texel * u_dt;
+          gl_FragColor = texture2D(u_src, pos) * u_diss;
+        }`;
+
+      // Divergence
+      const FS_DIV = `
+        precision highp float;
+        varying vec2 vUv;
+        uniform sampler2D u_vel;
+        uniform vec2 u_texel;
+        void main(){
+          float L = texture2D(u_vel, vUv - vec2(u_texel.x,0.0)).x;
+          float R = texture2D(u_vel, vUv + vec2(u_texel.x,0.0)).x;
+          float T = texture2D(u_vel, vUv + vec2(0.0,u_texel.y)).y;
+          float B = texture2D(u_vel, vUv - vec2(0.0,u_texel.y)).y;
+          gl_FragColor = vec4(0.5*(R-L+T-B), 0.0, 0.0, 1.0);
+        }`;
+
+      // Pressure (Jacobi)
+      const FS_PRESSURE = `
+        precision highp float;
+        varying vec2 vUv;
+        uniform sampler2D u_pres;
+        uniform sampler2D u_div;
+        uniform vec2 u_texel;
+        void main(){
+          float L = texture2D(u_pres, vUv - vec2(u_texel.x,0.0)).r;
+          float R = texture2D(u_pres, vUv + vec2(u_texel.x,0.0)).r;
+          float T = texture2D(u_pres, vUv + vec2(0.0,u_texel.y)).r;
+          float B = texture2D(u_pres, vUv - vec2(0.0,u_texel.y)).r;
+          float d = texture2D(u_div, vUv).r;
+          gl_FragColor = vec4((L+R+T+B - d)*0.25, 0.0, 0.0, 1.0);
+        }`;
+
+      // Gradient subtract (project)
+      const FS_GRAD = `
+        precision highp float;
+        varying vec2 vUv;
+        uniform sampler2D u_pres;
+        uniform sampler2D u_vel;
+        uniform vec2 u_texel;
+        void main(){
+          float L = texture2D(u_pres, vUv - vec2(u_texel.x,0.0)).r;
+          float R = texture2D(u_pres, vUv + vec2(u_texel.x,0.0)).r;
+          float T = texture2D(u_pres, vUv + vec2(0.0,u_texel.y)).r;
+          float B = texture2D(u_pres, vUv - vec2(0.0,u_texel.y)).r;
+          vec2  v = texture2D(u_vel, vUv).xy;
+          v -= 0.5*vec2(R-L, T-B);
+          gl_FragColor = vec4(v, 0.0, 1.0);
+        }`;
+
+      /* ---- final display shader ------------------------------
+         The density FBO is used as a mask.
+         Below mask  → base colour (dark)
+         Above mask  → reveal colour (mint green glow)
+         The Framer component reveals a second *image*; since we have
+         no real photo we use a mint/purple gradient as the "hover image"
+         — swap u_revealColor for a texture once a photo is available.
+      ---------------------------------------------------------------- */
+      const FS_DISPLAY = `
+        precision highp float;
+        varying vec2 vUv;
+        uniform sampler2D u_density;
+        uniform float     u_time;
+        void main(){
+          float mask   = clamp(texture2D(u_density, vUv).r, 0.0, 1.0);
+          // Base layer — dark purple
+          vec3 base    = vec3(0.176, 0.039, 0.200);
+          // Reveal layer — animated mint/green gradient
+          float shine  = 0.5 + 0.5*sin(u_time*1.2 + vUv.x*4.0 + vUv.y*2.0);
+          vec3 reveal  = mix(vec3(0.0, 0.337, 0.247), vec3(0.486, 0.961, 0.769), shine);
+          vec3 col     = mix(base, reveal, mask);
+          gl_FragColor = vec4(col, 0.85 + mask*0.15);
+        }`;
+
+      /* ---- material factory ---------------------------------- */
+      function mat(vs, fs, uniforms) {
+        return new ShaderMaterial({ vertexShader:vs, fragmentShader:fs, uniforms, depthWrite:false });
+      }
+
+      /* ---- build materials ----------------------------------- */
+      const texel = new Vector2(1/sW, 1/sH);
+
+      const mSplatVel = mat(VS_QUAD, FS_SPLAT_VEL, {
+        u_point: {value:new Vector2(0.5,0.5)},
+        u_vel:   {value:new Vector2(0,0)},
+        u_radius:{value:CFG.RADIUS},
+        u_aspect:{value:sW/sH},
+        u_target:{value:null},
+      });
+      const mSplatDen = mat(VS_QUAD, FS_SPLAT_DEN, {
+        u_point:  {value:new Vector2(0.5,0.5)},
+        u_radius: {value:CFG.RADIUS},
+        u_aspect: {value:sW/sH},
+        u_amount: {value:CFG.DENSITY_AMOUNT},
+        u_target: {value:null},
+      });
+      const mAdvect = mat(VS_QUAD, FS_ADVECT, {
+        u_vel:  {value:null}, u_src:{value:null},
+        u_texel:{value:texel}, u_dt:{value:1}, u_diss:{value:1},
+      });
+      const mDiv = mat(VS_QUAD, FS_DIV, {
+        u_vel:{value:null}, u_texel:{value:texel},
+      });
+      const mPres = mat(VS_QUAD, FS_PRESSURE, {
+        u_pres:{value:null}, u_div:{value:null}, u_texel:{value:texel},
+      });
+      const mGrad = mat(VS_QUAD, FS_GRAD, {
+        u_pres:{value:null}, u_vel:{value:null}, u_texel:{value:texel},
+      });
+      const mDisplay = mat(VS_MAIN, FS_DISPLAY, {
+        u_density:{value:null}, u_time:{value:0},
+      });
+
+      /* ---- helper: render material into FBO ------------------ */
+      const quadMesh = new Mesh(quadGeo, mAdvect);
+      scene.add(quadMesh);
+
+      function runPass(mat, target) {
+        quadMesh.material = mat;
+        renderer.setRenderTarget(target);
+        renderer.render(scene, ortho);
+      }
+
+      /* ---- display plane (fills frame) ----------------------- */
+      const planeH = H;
+      const planeW = W;
+      const dispGeo  = new PlaneGeometry(planeW, planeH);
+      const dispMesh = new Mesh(dispGeo, mDisplay);
+      const dispScene = new Scene();
+      dispScene.add(dispMesh);
+
+      /* ---- mouse tracking ------------------------------------ */
+      let mouseUV  = {x:0.5, y:0.5};
+      let prevUV   = {x:0.5, y:0.5};
+      let isHovering = false;
+
+      frame.addEventListener('mouseenter', () => { isHovering = true; });
+      frame.addEventListener('mouseleave', () => { isHovering = false; });
+      frame.addEventListener('mousemove', (e) => {
+        const rect = frame.getBoundingClientRect();
+        mouseUV.x = (e.clientX - rect.left) / rect.width;
+        mouseUV.y = 1.0 - (e.clientY - rect.top) / rect.height;
+      });
+
+      /* ---- clock / animation --------------------------------- */
+      const clock = new Clock();
+      let raf;
+
+      function simulate() {
+        const dt     = Math.min(clock.getDelta(), 0.033);
+        const time   = clock.getElapsedTime();
+        const aspect = sW / sH;
+        const tSim   = new Vector2(1/sW, 1/sH);
+
+        /* velocity & density from mouse */
+        if (isHovering) {
+          const vx = (mouseUV.x - prevUV.x) * 15;
+          const vy = (mouseUV.y - prevUV.y) * 15;
+
+          // splat velocity
+          mSplatVel.uniforms.u_point.value.set(mouseUV.x, mouseUV.y);
+          mSplatVel.uniforms.u_vel.value.set(vx, vy);
+          mSplatVel.uniforms.u_aspect.value = aspect;
+          mSplatVel.uniforms.u_target.value = velA.texture;
+          runPass(mSplatVel, velB);
+          [velA, velB] = [velB, velA];
+
+          // splat density
+          mSplatDen.uniforms.u_point.value.set(mouseUV.x, mouseUV.y);
+          mSplatDen.uniforms.u_aspect.value = aspect;
+          mSplatDen.uniforms.u_target.value = denA.texture;
+          runPass(mSplatDen, denB);
+          [denA, denB] = [denB, denA];
+        } else {
+          // Slowly shrink density when not hovering
+          mAdvect.uniforms.u_vel.value  = velA.texture;
+          mAdvect.uniforms.u_src.value  = denA.texture;
+          mAdvect.uniforms.u_texel.value = tSim;
+          mAdvect.uniforms.u_dt.value   = dt * 20;
+          mAdvect.uniforms.u_diss.value = CFG.SHRINK_SPEED;
+          runPass(mAdvect, denB);
+          [denA, denB] = [denB, denA];
+        }
+
+        prevUV.x = mouseUV.x;
+        prevUV.y = mouseUV.y;
+
+        /* advect velocity */
+        mAdvect.uniforms.u_vel.value   = velA.texture;
+        mAdvect.uniforms.u_src.value   = velA.texture;
+        mAdvect.uniforms.u_texel.value = tSim;
+        mAdvect.uniforms.u_dt.value    = dt * 60;
+        mAdvect.uniforms.u_diss.value  = CFG.VELOCITY_DISSIPATION;
+        runPass(mAdvect, velB);
+        [velA, velB] = [velB, velA];
+
+        /* advect density */
+        mAdvect.uniforms.u_vel.value   = velA.texture;
+        mAdvect.uniforms.u_src.value   = denA.texture;
+        mAdvect.uniforms.u_texel.value = tSim;
+        mAdvect.uniforms.u_dt.value    = dt * 60;
+        mAdvect.uniforms.u_diss.value  = CFG.DENSITY_DISSIPATION;
+        runPass(mAdvect, denB);
+        [denA, denB] = [denB, denA];
+
+        /* divergence */
+        mDiv.uniforms.u_vel.value    = velA.texture;
+        mDiv.uniforms.u_texel.value  = tSim;
+        runPass(mDiv, divFBO);
+
+        /* pressure iterations */
+        for (let i = 0; i < CFG.PRESSURE_ITERATIONS; i++) {
+          mPres.uniforms.u_pres.value  = presA.texture;
+          mPres.uniforms.u_div.value   = divFBO.texture;
+          mPres.uniforms.u_texel.value = tSim;
+          runPass(mPres, presB);
+          [presA, presB] = [presB, presA];
+        }
+
+        /* gradient subtract */
+        mGrad.uniforms.u_pres.value  = presA.texture;
+        mGrad.uniforms.u_vel.value   = velA.texture;
+        mGrad.uniforms.u_texel.value = tSim;
+        runPass(mGrad, velB);
+        [velA, velB] = [velB, velA];
+
+        /* final display */
+        mDisplay.uniforms.u_density.value = denA.texture;
+        mDisplay.uniforms.u_time.value    = time;
+        renderer.setRenderTarget(null);
+        renderer.setSize(W, H);
+        renderer.render(dispScene, camera);
+
+        raf = requestAnimationFrame(simulate);
+      }
+
+      /* Show canvas, hide fallback */
+      fallback.style.opacity = '0';
+      fallback.style.transition = 'opacity 0.4s ease';
+      setTimeout(() => { fallback.style.display = 'none'; }, 400);
+
+      simulate();
+
+      /* ---- resize -------------------------------------------- */
+      const ro = new ResizeObserver(() => {
+        W = frame.clientWidth;
+        H = frame.clientHeight;
+        renderer.setSize(W, H);
+
+        // Rebuild sim FBOs at new size
+        sW = Math.max(1, Math.floor(W * CFG.SIM_SCALE));
+        sH = Math.max(1, Math.floor(H * CFG.SIM_SCALE));
+        [velA, velB, divFBO, presA, presB, denA, denB].forEach(f => f.dispose());
+        velA = makeFBO(sW,sH); velB = makeFBO(sW,sH);
+        divFBO = makeFBO(sW,sH);
+        presA = makeFBO(sW,sH); presB = makeFBO(sW,sH);
+        denA = makeFBO(sW,sH);  denB = makeFBO(sW,sH);
+        texel.set(1/sW, 1/sH);
+
+        // Update camera
+        camera.aspect = W/H;
+        camera.updateProjectionMatrix();
+      });
+      ro.observe(frame);
+    }
+  </script>
+
+  <script>
+    /* =============================================
+       CUSTOM CURSOR
+       ============================================= */
+    (function(){
+      const dot  = document.getElementById('cursor-dot');
+      const ring = document.getElementById('cursor-ring');
+      if (!dot || !ring) return;
+      if (!window.matchMedia('(hover:hover) and (pointer:fine)').matches) {
+        dot.style.display = 'none'; ring.style.display = 'none'; return;
+      }
+      let mx=-100,my=-100,rx=-100,ry=-100;
+      document.addEventListener('mousemove', e => {
+        mx=e.clientX; my=e.clientY;
+        dot.style.left=mx+'px'; dot.style.top=my+'px';
+      });
+      (function loop(){
+        rx+=(mx-rx)*.18; ry+=(my-ry)*.18;
+        ring.style.left=rx+'px'; ring.style.top=ry+'px';
+        requestAnimationFrame(loop);
+      })();
+      const hov = 'a,button,.skill-tile,.badge-card,.btn,input,textarea,.photo-sticker-frame';
+      document.addEventListener('mouseover', e => { if(e.target.closest(hov)) document.body.classList.add('cursor-hover'); });
+      document.addEventListener('mouseout',  e => { if(e.target.closest(hov)) document.body.classList.remove('cursor-hover'); });
+    })();
+
+    /* =============================================
+       TYPING EFFECT
+       ============================================= */
+    (function(){
+      const el = document.getElementById('typing-text');
+      if (!el) return;
+      const phrases = ['Computer Science Student','Aspiring Cybersecurity Analyst','Builder & Problem Solver'];
+      if (window.matchMedia('(prefers-reduced-motion:reduce)').matches) { el.textContent=phrases[0]; return; }
+      let pi=0,ci=0,del=false;
+      function tick(){
+        const phrase=phrases[pi];
+        if(!del){ ci++; el.textContent=phrase.slice(0,ci);
+          if(ci===phrase.length){ del=true; setTimeout(tick,1800); return; }
+          setTimeout(tick,65);
+        } else { ci--; el.textContent=phrase.slice(0,ci);
+          if(ci===0){ del=false; pi=(pi+1)%phrases.length; setTimeout(tick,400); return; }
+          setTimeout(tick,35);
+        }
+      }
+      setTimeout(tick,700);
+    })();
+
+    /* =============================================
+       SCROLL-REVEAL
+       ============================================= */
+    (function(){
+      if (window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+      const els = document.querySelectorAll('.reveal,.reveal-left,.reveal-right');
+      const io  = new IntersectionObserver(entries => {
+        entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); } });
+      }, { threshold:0.1 });
+      els.forEach(el => io.observe(el));
+    })();
+
+    /* =============================================
+       NAVBAR — active link + colour swap + mobile
+       ============================================= */
+    (function(){
+      const navbar   = document.getElementById('navbar');
+      const navLinks = document.querySelectorAll('.nav-links a');
+      const toggle   = document.getElementById('nav-toggle');
+      const menu     = document.getElementById('nav-menu');
+      const overlay  = document.getElementById('nav-overlay');
+      const sections = document.querySelectorAll('section[id]');
+      const greenSec = new Set(['about','skills','contact']);
+
+      function update(){
+        const sy = window.scrollY + 120;
+        let cur='';
+        sections.forEach(s=>{ if(sy>=s.offsetTop && sy<s.offsetTop+s.offsetHeight) cur=s.id; });
+        navbar.classList.toggle('bg-green', greenSec.has(cur));
+        navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href')==='#'+cur));
+      }
+      window.addEventListener('scroll', update, {passive:true}); update();
+
+      function close(){ menu.classList.remove('open'); overlay.classList.remove('show'); toggle.classList.remove('open'); toggle.setAttribute('aria-expanded','false'); }
+      function open() { menu.classList.add('open');    overlay.classList.add('show');    toggle.classList.add('open');    toggle.setAttribute('aria-expanded','true');  }
+      toggle.addEventListener('click', ()=> menu.classList.contains('open') ? close() : open());
+      overlay.addEventListener('click', close);
+      menu.querySelectorAll('a').forEach(a=>a.addEventListener('click',close));
+      document.addEventListener('keydown', e => { if(e.key==='Escape') close(); });
+    })();
+
+    /* =============================================
+       CONTACT FORM
+       ============================================= */
+    (function(){
+      const form   = document.getElementById('contact-form');
+      const status = document.getElementById('form-status');
+      if (!form) return;
+      function setStatus(msg,type){ status.textContent=msg; status.className='form-status '+type; }
+      function validEmail(s){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s); }
+      form.addEventListener('submit', e=>{
+        e.preventDefault();
+        const name=form.querySelector('#c-name').value.trim();
+        const email=form.querySelector('#c-email').value.trim();
+        const subj=form.querySelector('#c-subject').value.trim();
+        const msg=form.querySelector('#c-message').value.trim();
+        if(!name||!email||!subj||!msg){ setStatus('> All fields required.','error'); return; }
+        if(!validEmail(email)){ setStatus('> Invalid email address.','error'); return; }
+        const btn=form.querySelector('button[type="submit"]');
+        btn.disabled=true; btn.textContent='Encrypting… 🔒';
+        setTimeout(()=>{
+          setStatus(`> Message received, ${name}. I'll be in touch soon! 🛡️`,'success');
+          form.reset(); btn.disabled=false; btn.textContent='Send Message 🔐';
+        },1500);
+      });
+    })();
+
+    /* =============================================
+       FOOTER EASTER EGG TERMINAL
+       ============================================= */
+    (function(){
+      const input  = document.getElementById('footer-input');
+      const output = document.getElementById('footer-output');
+      if (!input||!output) return;
+      const cmds = {
+        'sudo hire sphiwe':[
+          '[sudo] password for recruiter: ••••••••',
+          'Authenticating…',
+          'Access GRANTED ✅',
+          'Initiating hire sequence… 🚀',
+          'Sphiwe Dube added to your team.',
+          'You just made an excellent decision.',
+        ],
+        'ls':  ['about  project  skills  achievements  roadmap  contact'],
+        'pwd': ['/portfolio/sphiwe_dube'],
+        'help':['Available: sudo hire sphiwe | ls | pwd | clear'],
+      };
+      input.addEventListener('keydown', e=>{
+        if(e.key!=='Enter') return;
+        const cmd=input.value.trim().toLowerCase(); input.value='';
+        if(!cmd) return;
+        if(cmd==='clear'){ output.textContent=''; return; }
+        const lines = cmds[cmd] || [`Command not found: ${cmd}. Type "help".`];
+        output.textContent='';
+        let i=0;
+        (function next(){ if(i>=lines.length) return; output.textContent+=(i>0?'\n':'')+lines[i++]; setTimeout(next,200); })();
+      });
+    })();
+
+    /* Footer year */
+    document.getElementById('footer-year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
